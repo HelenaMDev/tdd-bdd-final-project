@@ -131,7 +131,7 @@ class TestProductModel(unittest.TestCase):
         products = Product.all()
         self.assertEqual(len(products), 1)
         self.assertEqual(products[0].id, original_id)
-        self.assertEqual(products[0].description, "testing")        
+        self.assertEqual(products[0].description, "testing")
 
     def test_delete_a_product(self):
         """It should Delete a Product"""
@@ -140,8 +140,8 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(len(Product.all()), 1)
         # delete the product and make sure it isn't in the database
         product.delete()
-        self.assertEqual(len(Product.all()), 0)   
-        
+        self.assertEqual(len(Product.all()), 0)
+
     def test_find_by_name(self):
         """It should Find a Product by Name"""
         products = ProductFactory.create_batch(5)
@@ -152,7 +152,7 @@ class TestProductModel(unittest.TestCase):
         found = Product.find_by_name(name)
         self.assertEqual(found.count(), count)
         for product in found:
-            self.assertEqual(product.name, name)        
+            self.assertEqual(product.name, name)
 
     def test_find_by_availability(self):
         """It should Find Products by Availability"""
@@ -164,4 +164,4 @@ class TestProductModel(unittest.TestCase):
         found = Product.find_by_availability(available)
         self.assertEqual(found.count(), count)
         for product in found:
-            self.assertEqual(product.available, available)            
+            self.assertEqual(product.available, available)
