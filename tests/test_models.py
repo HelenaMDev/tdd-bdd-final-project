@@ -50,7 +50,8 @@ class TestProductModel(unittest.TestCase):
         app.config["DEBUG"] = False
         app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
         app.logger.setLevel(logging.CRITICAL)
-        Product.init_db(app)
+        if not hasattr(app, 'extensions') or 'sqlalchemy' not in app.extensions:
+            Product.init_db(app)
 
     @classmethod
     def tearDownClass(cls):
@@ -172,3 +173,86 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(found.count(), count)
         for product in found:
             self.assertEqual(product.available, available)
+
+    def test_serialize_a_product(self):
+        """It should Serialize a Product"""
+        product = Product(name="Shirt", description="A blue shirt", price=20.00, category="Clothing")
+        data = product.serialize()
+        self.assertIsInstance(data, dict)
+        self.assertEqual(data['id'], product.id)
+        self.assertEqual(data['name'], "Shirt")
+        self.assertEqual(data['description'], "A blue shirt")
+        self.assertEqual(data['price'], 20.00)
+        self.assertEqual(data['category'], "Clothing")
+        self.assertEqual(data['available'], True)  # Default value
+
+    def test_deserialize_a_product(self):
+        """It should Deserialize a Product"""
+        data = {
+            'id': 1,
+            'name': 'Hat',
+            'description': 'A red hat',
+            'price': 10.00,
+            'category': 'Clothing',
+            'available': True
+        }
+        product = Product()
+        product.deserialize(data)
+        self.assertNotEqual(product, None)
+        self.assertEqual(product.id, 1)
+        self.assertEqual(product.name, 'Hat')
+        self.assertEqual(product.description, 'A red hat')
+        self.assertEqual(product.price, 10.00)
+        self.assertEqual(product.category, 'Clothing')
+        self.assertEqual(product.available, True)
+
+    def test_deserialize_missing_data(self):
+        """It should not Deserialize a Product with missing data"""
+        data = {
+            'id': 1,
+            'name': 'Hat',
+            'description': 'A red hat',
+            'price': 10.00,
+            'category': 'Clothing'
+        }
+        product = Product()
+        self.assertRaises(DataValidationError, product.deserialize, data)
+
+    def test_deserialize_bad_data(self):
+        """It should not Deserialize bad data"""
+        data = "this is not a dictionary"
+        product = Product()
+        self.assertRaises(DataValidationError, product.deserialize, data)
+
+    def test_deserialize_bad_available(self):
+        """It should not Deserialize a bad available attribute"""
+        data = {
+            'id': 1,
+            'name': 'Hat',
+            'description': 'A red hat',
+            'price': 10.00,
+            'category': 'Clothing',
+            'available': 'yes'  # Bad data type
+        }
+        product = Product()
+        self.assertRaises(DataValidationError, product.deserialize, data)
+
+    def test_find_or_404_found(self):
+        """It should Find a product or return 404 not found"""
+        products = Product.all()
+        self.assertEqual(products, [])
+
+        product = Product(name="Shirt", description="A blue shirt", price=20.00, category="Clothing")
+        product.create()
+
+        found_product = Product.find_or_404(product.id)
+        self.assertIsNot(found_product, None)
+        self.assertEqual(found_product.id, product.id)
+        self.assertEqual(found_product.name, "Shirt")
+
+    def test_find_or_404_not_found(self):
+        """It should return 404 not found"""
+        products = Product.all()
+        self.assertEqual(products, [])
+
+        self.assertRaises(NotFound, Product.find_or_404, 5)

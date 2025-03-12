@@ -42,7 +42,8 @@ db = SQLAlchemy()
 
 def init_db(app):
     """Initialize the SQLAlchemy app"""
-    Product.init_db(app)
+    if not hasattr(app, 'extensions') or 'sqlalchemy' not in app.extensions:
+        Product.init_db(app)
 
 
 class DataValidationError(Exception):
