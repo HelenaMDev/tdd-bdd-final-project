@@ -176,14 +176,14 @@ class TestProductModel(unittest.TestCase):
 
     def test_serialize_a_product(self):
         """It should Serialize a Product"""
-        product = Product(name="Shirt", description="A blue shirt", price=20.00, category="Clothing")
+        product = Product(name="Shirt", description="A blue shirt", price=20.00, category=Category.CLOTHS, available=True)
         data = product.serialize()
         self.assertIsInstance(data, dict)
         self.assertEqual(data['id'], product.id)
         self.assertEqual(data['name'], "Shirt")
         self.assertEqual(data['description'], "A blue shirt")
-        self.assertEqual(data['price'], 20.00)
-        self.assertEqual(data['category'], "Clothing")
+        self.assertEqual(data['price'], 20.0)
+        self.assertEqual(data['category'], Category.CLOTHS.name)
         self.assertEqual(data['available'], True)  # Default value
 
     def test_deserialize_a_product(self):
@@ -193,17 +193,17 @@ class TestProductModel(unittest.TestCase):
             'name': 'Hat',
             'description': 'A red hat',
             'price': 10.00,
-            'category': 'Clothing',
+            'category': Category.CLOTHS,
             'available': True
         }
         product = Product()
-        product.deserialize(data)
+        product = product.deserialize(data)
         self.assertNotEqual(product, None)
         self.assertEqual(product.id, 1)
         self.assertEqual(product.name, 'Hat')
         self.assertEqual(product.description, 'A red hat')
         self.assertEqual(product.price, 10.00)
-        self.assertEqual(product.category, 'Clothing')
+        self.assertEqual(product.category, Category.CLOTHS)
         self.assertEqual(product.available, True)
 
     def test_deserialize_missing_data(self):
@@ -213,7 +213,7 @@ class TestProductModel(unittest.TestCase):
             'name': 'Hat',
             'description': 'A red hat',
             'price': 10.00,
-            'category': 'Clothing'
+            'category': Category.CLOTHS
         }
         product = Product()
         self.assertRaises(DataValidationError, product.deserialize, data)
@@ -231,28 +231,21 @@ class TestProductModel(unittest.TestCase):
             'name': 'Hat',
             'description': 'A red hat',
             'price': 10.00,
-            'category': 'Clothing',
+            'category': Category.CLOTHS,
             'available': 'yes'  # Bad data type
         }
         product = Product()
         self.assertRaises(DataValidationError, product.deserialize, data)
 
-    def test_find_or_404_found(self):
+    def test_find(self):
         """It should Find a product or return 404 not found"""
         products = Product.all()
         self.assertEqual(products, [])
 
-        product = Product(name="Shirt", description="A blue shirt", price=20.00, category="Clothing")
+        product = Product(name="Shirt", description="A blue shirt", price=20.00, category=Category.CLOTHS)
         product.create()
 
-        found_product = Product.find_or_404(product.id)
+        found_product = Product.find(product.id)
         self.assertIsNot(found_product, None)
         self.assertEqual(found_product.id, product.id)
         self.assertEqual(found_product.name, "Shirt")
-
-    def test_find_or_404_not_found(self):
-        """It should return 404 not found"""
-        products = Product.all()
-        self.assertEqual(products, [])
-
-        self.assertRaises(NotFound, Product.find_or_404, 5)

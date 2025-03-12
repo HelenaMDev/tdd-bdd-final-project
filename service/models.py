@@ -119,7 +119,7 @@ class Product(db.Model):
             "id": self.id,
             "name": self.name,
             "description": self.description,
-            "price": str(self.price),
+            "price": self.price,
             "available": self.available,
             "category": self.category.name  # convert enum to string
         }
@@ -131,6 +131,7 @@ class Product(db.Model):
             data (dict): A dictionary containing the Product data
         """
         try:
+            self.id = data["id"]
             self.name = data["name"]
             self.description = data["description"]
             self.price = Decimal(data["price"])
@@ -141,7 +142,7 @@ class Product(db.Model):
                     "Invalid type for boolean [available]: "
                     + str(type(data["available"]))
                 )
-            self.category = getattr(Category, data["category"])  # create enum from string
+            self.category = Category[data["category"].name]  # create enum from string
         except AttributeError as error:
             raise DataValidationError("Invalid attribute: " + error.args[0]) from error
         except KeyError as error:
