@@ -217,7 +217,7 @@ class TestProductModel(unittest.TestCase):
             'name': 'Hat',
             'description': 'A red hat',
             'price': 10.00,
-            'category': Category.CLOTHS,
+            'category': Category.CLOTHS.name,
             'available': True
         }
         product = Product()
