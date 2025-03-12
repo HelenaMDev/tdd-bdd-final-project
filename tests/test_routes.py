@@ -182,10 +182,10 @@ class TestProductRoutes(TestCase):
     # Utility functions
     ######################################################################
 
-    def get_product_count(self):
-        """save the current number of products"""
-        response = self.client.get(BASE_URL)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.get_json()
-        # logging.debug("data = %s", data)
-        return len(data)
+    # def get_product_count(self):
+    #     """save the current number of products"""
+    #     response = self.client.get(BASE_URL)
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     data = response.get_json()
+    #     # logging.debug("data = %s", data)
+    #     return len(data)

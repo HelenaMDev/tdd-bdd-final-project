@@ -174,6 +174,18 @@ class TestProductModel(unittest.TestCase):
         for product in found:
             self.assertEqual(product.price, price)
 
+    def test_find_by_price_with_string(self):
+        """It should find products by price when price is a string"""
+        products = ProductFactory.create_batch(10)
+        for product in products:
+            product.create()
+        price = products[0].price
+        count = len([product for product in products if product.price == price])
+        found = Product.find_by_price(str(price))
+        self.assertEqual(found.count(), count)
+        for product in found:
+            self.assertEqual(product.price, price)
+
     def test_find_by_availability(self):
         """It should Find Products by Availability"""
         products = ProductFactory.create_batch(10)
@@ -260,6 +272,29 @@ class TestProductModel(unittest.TestCase):
         }
         product = Product()
         self.assertRaises(DataValidationError, product.deserialize, data)
+
+    def test_deserialize_invalid_attribute(self):
+        """It should raise DataValidationError for an invalid attribute"""
+        # Create a Product instance
+        product = Product()
+
+        # Define invalid data that will cause an AttributeError
+        invalid_data = {
+            "id": 1,
+            "name": "Shirt",
+            "description": "A blue shirt",
+            "price": 20.00,
+            "quantity": 10,
+            "category": "INVALID_CATEGORY",  # This will cause an AttributeError
+            "available": True
+        }
+
+        # Attempt to deserialize and expect a DataValidationError
+        with self.assertRaises(DataValidationError) as context:
+            product.deserialize(invalid_data)
+
+        # Check if the exception message is as expected
+        self.assertIn("Invalid attribute:", str(context.exception))
 
     def test_find(self):
         """It should Find a product or return 404 not found"""
