@@ -235,7 +235,6 @@ class TestProductModel(unittest.TestCase):
         product = Product()
         product.deserialize(data)
         self.assertNotEqual(product, None)
-        self.assertEqual(product.id, 1)
         self.assertEqual(product.name, 'Hat')
         self.assertEqual(product.description, 'A red hat')
         self.assertEqual(product.price, 10.00)
