@@ -47,7 +47,10 @@ def step_impl(context, message):
 
 @then('I should not see "{text_string}"')
 def step_impl(context, text_string):
-    element = context.driver.find_element(By.TAG_NAME, 'body')
+    element = WebDriverWait(context.driver, context.wait_seconds).until(
+        expected_conditions.presence_of_element_located((By.TAG_NAME, "body"))
+    )
+#    element = context.driver.find_element(By.TAG_NAME, 'body')
     assert(text_string not in element.text)
 
 @when('I set the "{element_name}" to "{text_string}"')
@@ -107,7 +110,7 @@ def step_impl(context, element_name):
 @when('I press the "{button}" button')
 def step_impl(context, button):
     button_id = button.lower() + '-btn'
-    context.driver.find_element_by_id(button_id).click()
+    context.driver.find_element(By.ID, button_id).click()
 
 @then('I should see "{name}" in the results')
 def step_impl(context, name):
@@ -121,7 +124,13 @@ def step_impl(context, name):
 
 @then('I should not see "{name}" in the results')
 def step_impl(context, name):
-    element = context.driver.find_element_by_id('search_results')
+    element = WebDriverWait(context.driver, context.wait_seconds).until(
+        expected_conditions.presence_of_element_located(
+            (By.ID, "search_results")
+        )
+    )
+    element.click()
+#    element = context.driver.find_element(By.ID, 'search_results').click()
     assert(name not in element.text)
 
 @then('I should see the message "{message}"')

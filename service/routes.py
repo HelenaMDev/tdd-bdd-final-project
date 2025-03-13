@@ -166,12 +166,7 @@ def update_product(product_id):
     product.deserialize(request.get_json())
     product.id = product_id
     product.update()
-    app.logger.info("Product with id [%s] updated!", product.id)
-
-    message = product.serialize()
-
-    location_url = url_for("get_products", product_id=product.id, _external=True)
-    return jsonify(message), status.HTTP_200_OK, {"Location": location_url}
+    return product.serialize(), status.HTTP_200_OK
 
 
 ######################################################################

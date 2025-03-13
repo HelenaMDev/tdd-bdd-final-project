@@ -5,8 +5,8 @@ from os import getenv
 from selenium import webdriver
 
 WAIT_SECONDS = int(getenv('WAIT_SECONDS', '30'))
-BASE_URL = getenv('BASE_URL', 'http://localhost:8080')
-DRIVER = getenv('DRIVER', 'firefox').lower()
+BASE_URL = getenv('BASE_URL', 'http://localhost:5000')
+DRIVER = getenv('DRIVER', 'abrowser').lower()
 
 
 def before_all(context):
@@ -14,7 +14,9 @@ def before_all(context):
     context.base_url = BASE_URL
     context.wait_seconds = WAIT_SECONDS
     # Select either Chrome or Firefox
-    if 'firefox' in DRIVER:
+    if 'abrowser' in DRIVER:
+        context.driver = get_abrowser()
+    elif 'firefox' in DRIVER:
         context.driver = get_firefox()
     else:
         context.driver = get_chrome()
@@ -42,5 +44,13 @@ def get_firefox():
     """Creates a headless Firefox driver"""
     options = webdriver.FirefoxOptions()
     options.add_argument("--headless")
+    return webdriver.Firefox(options=options)    
+
+
+def get_abrowser():
+    """Creates a headless Abrowser driver"""
+    options = webdriver.FirefoxOptions()
+    options.add_argument("--headless")
+    options.binary_location = "/usr/bin/abrowser"  # Path to the Abrowser binary
     return webdriver.Firefox(options=options)    
     
