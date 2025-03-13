@@ -262,4 +262,6 @@ $(function () {
 
     });
 
+    $("#search-btn").click();
+
 })

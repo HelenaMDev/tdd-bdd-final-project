@@ -5,8 +5,8 @@ from os import getenv
 from selenium import webdriver
 
 WAIT_SECONDS = int(getenv('WAIT_SECONDS', '30'))
-BASE_URL = getenv('BASE_URL', 'http://localhost:8080')
-DRIVER = getenv('DRIVER', 'firefox').lower()
+BASE_URL = getenv('BASE_URL', 'http://localhost:5000')
+DRIVER = getenv('DRIVER', 'abrowser').lower()
 
 
 def before_all(context):
