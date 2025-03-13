@@ -6,7 +6,7 @@ from selenium import webdriver
 
 WAIT_SECONDS = int(getenv('WAIT_SECONDS', '30'))
 BASE_URL = getenv('BASE_URL', 'http://localhost:5000')
-DRIVER = getenv('DRIVER', 'abrowser').lower()
+DRIVER = getenv('DRIVER', 'firefox').lower()
 
 
 def before_all(context):
